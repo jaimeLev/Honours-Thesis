@@ -34,25 +34,49 @@ def zeroRegret(graph, busLoad, capacities):
     distances[0] = 0
     visited = [False]*len(graph)
     loads = [busLoad]*len(graph)
-    current = [[0]]*len(graph)
+    current = [0]*len(graph)
     prevs = [0]*len(graph) # routes of the paths
     #prevs[0] = None
     print(prevs)
     G.remove(0)
+    busIndex = 0
 
 
-    for _ in range(len(graph)):
+    for node in range(len(graph)):
         min_dist = float('inf')
         minV = None
         print(distances)
         for i in range(len(graph)): # find next shortest
-            if not visited[i] and distances[i] < min_dist:
+            if node != i and not visited[i] and graph[node][i] < min_dist and loads[node]-capacities[i] >= 0:
                 print(distances[i], i)
-                min_dist = distances[i]
+                min_dist = graph[node][i]
                 minV = i
         
         if minV is None:
             break
+        
+        #loads not on node but on bus track have to do prevs
+        if node == 0 or minV == 0:
+            # new bus
+            print(minV, node)
+            if minV != 0:
+                routes[busIndex].append(minV)
+                loads[busIndex] -= capacities[minV]
+                current[busIndex] = minV
+            else:
+                routes[busIndex].append(node)
+                loads[busIndex] -= capacities[node]
+                current[busIndex] = node
+            busIndex += 1
+        else:
+            # find the prev and attach it to their load
+            print(minV, node, prevs, " not 0", visited, current)
+            if node in current:
+                print("node in current")
+                index = current.index(node)
+                loads[index] -= capacities[node] # of the bus its on the route for
+                # need to bring this up before i select it as min_dist, if it doesn't satisfy capacity constraints need to move onto next smallest
+        print("new edge is ", minV, node, graph[minV][node], loads, routes)
         visited[minV] = True
 
         for v in range(len(graph)): # relaxation
@@ -66,6 +90,7 @@ def zeroRegret(graph, busLoad, capacities):
     
     print(distances)
     print(prevs)
+    print(routes)
 
     # for i in range(1, len(graph)):
     #     printPaths(prevs, i)
