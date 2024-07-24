@@ -1,3 +1,6 @@
+# need to print out distances for every node to the source
+# then need to do it for every edge from min to max
+
 def zeroRegret(graph, busLoad, capacities):
     # find min path from 0 to all other nodes. Only take a path is the bus can offload that amount of people
     # start with all buses taking direct routes
@@ -64,6 +67,9 @@ def zeroRegret(graph, busLoad, capacities):
                     # update busDistances
                     busDistances[index1] = altto0
                     busDistances[index0] -= graph[location[0]][location[1]]
+
+                    #distances[index1] = altto0
+                    distances[index0] -= graph[location[0]][location[1]]
                     
                     # delete bus if necessary and same indices if relevant
                     if paths[index0] == [0]:
@@ -90,6 +96,9 @@ def zeroRegret(graph, busLoad, capacities):
                     # update busDistances
                     busDistances[index0] = altto1
                     busDistances[index1] -= graph[location[0]][location[1]]
+
+                    #distances[index0] = altto1
+                    distances[index1] -= graph[location[0]][location[1]]
                     
                     # delete bus if necessary and same indices if relevant
                     if paths[index1] == [0]:
@@ -97,7 +106,7 @@ def zeroRegret(graph, busLoad, capacities):
                         loads.pop(index1)
                         busDistances.pop(index1)
                     
-            print(paths, loads, busDistances)
+            print(paths, loads, busDistances, distances)
                 
 
 
