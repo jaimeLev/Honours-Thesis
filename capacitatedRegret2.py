@@ -74,7 +74,9 @@ def zeroRegret(graph, busLoad, capacities):
             if node in current:
                 print("node in current")
                 index = current.index(node)
-                loads[index] -= capacities[node] # of the bus its on the route for
+                if loads[index] - capacities[minV] >= 0:
+                    # choose this index otherwise skip
+                    loads[index] -= capacities[minV] # of the bus its on the route for
                 # need to bring this up before i select it as min_dist, if it doesn't satisfy capacity constraints need to move onto next smallest
         print("new edge is ", minV, node, graph[minV][node], loads, routes)
         visited[minV] = True
