@@ -1,3 +1,4 @@
+# multiply the regret at each bus stop by the capacity of that bus stop to get the total regret in the system
 def calculate_direct_distances(graph):
     # find min path from source to all other nodes
     distances = [float('inf')]*len(graph)
