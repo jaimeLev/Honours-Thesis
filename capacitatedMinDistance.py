@@ -1,8 +1,10 @@
+# multiply the regret at each bus stop by the capacity of that bus stop to get the total regret in the system
+
 # function finds the distances from the source to each node in the network
 # These direct distances form the baseline to compare the minimal distance model
 # to gather the total regret and the regret for each individual
 def calculate_direct_distances(graph, n):
-    # find min path from source to all other nodes as a baseline to compare for regret
+    # find min path from source to all other nodes
     distances = [float('inf')]*n
     distances[0] = 0
     visited = [False]*n
@@ -17,7 +19,7 @@ def calculate_direct_distances(graph, n):
         
         if minV is None:
             break
-        visited[minV] = True # don't cause loops
+        visited[minV] = True # stops loops being formed
 
         for v in range(n):
             if graph[minV][v] != 0 and not visited[v]: # checking alternate paths
@@ -27,11 +29,10 @@ def calculate_direct_distances(graph, n):
     return distances
     
 
+
 # determines the regret for the students that they would experience at each bus stop
 # compares the direct distances calculated with the minimal distance model
-def calculate_regret(busRoutes, direct, path_distances, graph):
-    print(busRoutes, " = bus routes")
-    print(direct, " = direct distances from source to each node")
+def calculate_regret(busRoutes, direct, path_distances, graph, capacities):
     for bus in busRoutes:
         stop = 2 # busRoute[0] = 0 and busRoute[1] is the first so the path_distances[busRoute[1]] is the path_distance so far so only need to add the rest on top of that
         while stop < len(bus):
@@ -39,18 +40,21 @@ def calculate_regret(busRoutes, direct, path_distances, graph):
             stop += 1
     print(path_distances, " = path from source to each node i") # correct
 
-    regret = [path_distances[i] - direct[i] for i in range(len(direct))] # regret for each individual bus stop
-    print(regret, " = regret experienced at each bus stop on the choice of routes in minimal distance model")
+    regretAtBusStops = [path_distances[i] - direct[i] for i in range(len(direct))] # regret for each individual bus stop
+    print(regretAtBusStops, " = regret experienced at each bus stop on the choice of routes in minimal distance model")
+    regret = [regretAtBusStops[i]*capacities[i] for i in range(len(capacities))]
+    print(regret, " = regret at each bus stop multiplied by the number of students at each stop")
     print(sum(regret), " = total regret of the system")
 
 
 # the model to calculate which buses take which routes in a minimal distance model
-def minDistance(graph, source):
+def capacitatedMinDistance(graph, source, busLoad, capacities):
     # set up
     n = len(graph)
-    G = [] # a list of unvisited nodes, intially will be all nodes excpet the source (where all buses start)
-    current = [source]*n # a list of the nodes that the different buses are currently at
+    G = [] # list of unvisited nodes, initially will be all nodes except the source
+    current = [source]*n
     busRoutes = []
+    loads = [busLoad]*n # set up loads to be the max
     directDistances = calculate_direct_distances(graph, n)
     pathDistances = [0]*n
     for v in range(n):
@@ -66,23 +70,33 @@ def minDistance(graph, source):
         # grab the nearest unvisited neighbouring node from all of the current positions of the buses in the network
         for node in set(current):
             for v in G:
-                if node != v and graph[node][v] < min_dist:
+                if node != v and graph[node][v] < min_dist and loads[current.index(node)]-capacities[v] >= 0:
                     min_dist = graph[node][v]
                     minV = v # where we are going
                     path = node
         # find index in current where element = node, and update that index
         # ie. find the index of the relevant bus route, and update the endpoint to minV
         # update route and distance and remove node minV as it has now been visited
+        
         busNumber = current.index(path)
+        loads[busNumber] -= capacities[minV] # update how many people the bus can still transport after visiting this node
         current[busNumber] = minV
         busRoutes[busNumber].append(minV)
         pathDistances[minV] += min_dist
         G.remove(minV)
-    
-    # remove any redundant bus routes
+        
+    # remove any redundant bus routes    
     busRoutes = [x for x in busRoutes if x != [0]]
-
-    calculate_regret(busRoutes, directDistances, pathDistances, graph)
+    
+    print(capacities, " = number of students being dropped off at each bus stop")
+    print(directDistances, " = direct distances from source to each node")
+    print(busRoutes, " = bus routes")
+    passengers = [busLoad - loads[i] for i in range(n) if busLoad - loads[i] != 0]
+    print(passengers, " = number of students travelling on each bus")
+    print()
+   
+    calculate_regret(busRoutes, directDistances, pathDistances, graph, capacities)
+    
 
 
 if __name__ == "__main__":
@@ -93,4 +107,6 @@ if __name__ == "__main__":
              [3, 4, 4, 2, 0, 1, 9],
              [5, 5, 5, 4, 1, 0, 10],
              [6, 7, 9, 15, 9, 10, 0]]
-    minDistance(graph, 0)
+    capacities = [0,5, 1, 3, 3, 2, 4]
+    busLoad = 5
+    capacitatedMinDistance(graph, 0, busLoad, capacities)
