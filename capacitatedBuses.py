@@ -82,6 +82,7 @@ def generalisedBuses(graph, source, busLoad, capacities):
         
     visited = [x for x in visited if x != [0]]
     print(visited, len(visited), directDistances)
+    print(loads, "loads")
 
     calculate_regret(visited, directDistances, pathDistances, graph)
     

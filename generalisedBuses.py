@@ -32,7 +32,7 @@ def calculate_regret(visited, direct, path_distances, graph):
         while stop < len(busRoute):
             distances[busRoute[stop]] += distances[busRoute[stop-1]]
             stop += 1
-    print(distances) # correct
+    print(distances, direct) # correct
 
     regret = [distances[i] - direct[i] for i in range(len(direct))]
     print(regret) # not done right because of direct distances
