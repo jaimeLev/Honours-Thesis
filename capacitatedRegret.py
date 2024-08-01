@@ -9,7 +9,6 @@ def zeroRegret(graph, busLoad, capacities):
     busDistances = []
     distances = []
     loads = [busLoad]*(len(graph)-1)
-    print(loads)
     endpoints = []
     for v in range(1, len(graph)):
         paths.append([0, v])
@@ -81,8 +80,7 @@ def zeroRegret(graph, busLoad, capacities):
                         
                         endpoints.remove(location[1])
                         
-                        
-                if altto1 <= busDistances[index1]:
+                elif altto1 <= busDistances[index1]:
                     # see if it satisfies the capacity constraints
                     if loads[index0] - capacities[location[1]] >= 0:
         
@@ -112,8 +110,11 @@ def zeroRegret(graph, busLoad, capacities):
     print(capacities, " = how many students at each bus stop")
     print(distances, " = distances found from source to every node")
     print(paths, " = bus routes")
-    print(loads, " = number of students travelling on each bus")
+    passengers = [busLoad - loads[i] for i in range(len(loads)) if busLoad - loads[i] != 0]
+    print(passengers, " = number of students travelling on each bus")
     print(busDistances, " = the distance that each bus travels on its route")
+
+    return distances
                     
 
 
@@ -123,14 +124,25 @@ def zeroRegret(graph, busLoad, capacities):
 
     
 if __name__ == "__main__":
-    graph = [[0, 2, 3, 2, 3, 5, 6], 
-             [2, 0, 1, 4, 4, 5, 7],
-             [3, 1, 0, 3, 4, 5, 9],
-             [2, 4, 3, 0, 2, 4, 15],
-             [3, 4, 4, 2, 0, 1, 9],
-             [5, 5, 5, 4, 1, 0, 10],
-             [6, 7, 9, 15, 9, 10, 0]]
+    # graph = [[0, 2, 3, 2, 3, 5, 6], 
+    #          [2, 0, 1, 4, 4, 5, 7],
+    #          [3, 1, 0, 3, 4, 5, 9],
+    #          [2, 4, 3, 0, 2, 4, 15],
+    #          [3, 4, 4, 2, 0, 1, 9],
+    #          [5, 5, 5, 4, 1, 0, 10],
+    #          [6, 7, 9, 15, 9, 10, 0]]
+    graph = []
+    with open('randomMatrix.txt', 'r') as file:
+        for line in file:
+            line = line[1:-2].split(",")
+            line = [int(i.strip()) for i in line]
+            graph.append(line)
+
+    
     capacities = [0, 5, 1, 3, 3, 2, 4]
     #capacities = [0, 1, 1, 1, 1, 1, 1]
     busLoad = 5
-    zeroRegret(graph, busLoad, capacities)
+    directDistances = zeroRegret(graph, busLoad, capacities)
+
+    with open('directDistances.txt', 'w') as file:
+        file.write(str(directDistances))

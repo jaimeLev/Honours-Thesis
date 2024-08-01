@@ -40,22 +40,23 @@ def calculate_regret(busRoutes, direct, path_distances, graph, capacities):
             stop += 1
     print(path_distances, " = path from source to each node i") # correct
 
-    regretAtBusStops = [path_distances[i] - direct[i] for i in range(len(direct))] # regret for each individual bus stop
+    regretAtBusStops = [path_distances[i+1] - direct[i] for i in range(len(direct))] # regret for each individual bus stop
     print(regretAtBusStops, " = regret experienced at each bus stop on the choice of routes in minimal distance model")
-    regret = [regretAtBusStops[i]*capacities[i] for i in range(len(capacities))]
+    print(capacities, " = capacities")
+    regret = [regretAtBusStops[i]*capacities[i+1] for i in range(len(regretAtBusStops))]
     print(regret, " = regret at each bus stop multiplied by the number of students at each stop")
     print(sum(regret), " = total regret of the system")
 
 
 # the model to calculate which buses take which routes in a minimal distance model
-def capacitatedMinDistance(graph, source, busLoad, capacities):
+def capacitatedMinDistance(graph, source, busLoad, capacities, directDistances):
     # set up
     n = len(graph)
     G = [] # list of unvisited nodes, initially will be all nodes except the source
     current = [source]*n
     busRoutes = []
     loads = [busLoad]*n # set up loads to be the max
-    directDistances = calculate_direct_distances(graph, n)
+    #directDistances = calculate_direct_distances(graph, n)
     pathDistances = [0]*n
     for v in range(n):
         G.append(v)
@@ -100,13 +101,27 @@ def capacitatedMinDistance(graph, source, busLoad, capacities):
 
 
 if __name__ == "__main__":
-    graph = [[0, 2, 3, 2, 3, 5, 6], 
-             [2, 0, 1, 4, 4, 5, 7],
-             [3, 1, 0, 3, 4, 5, 9],
-             [2, 4, 3, 0, 2, 4, 15],
-             [3, 4, 4, 2, 0, 1, 9],
-             [5, 5, 5, 4, 1, 0, 10],
-             [6, 7, 9, 15, 9, 10, 0]]
+    # graph = [[0, 2, 3, 2, 3, 5, 6], 
+    #          [2, 0, 1, 4, 4, 5, 7],
+    #          [3, 1, 0, 3, 4, 5, 9],
+    #          [2, 4, 3, 0, 2, 4, 15],
+    #          [3, 4, 4, 2, 0, 1, 9],
+    #          [5, 5, 5, 4, 1, 0, 10],
+    #          [6, 7, 9, 15, 9, 10, 0]]
+    graph = []
+    with open('randomMatrix.txt', 'r') as file:
+        for line in file:
+            line = line[1:-2].split(",")
+            line = [int(i.strip()) for i in line]
+            graph.append(line)
     capacities = [0,5, 1, 3, 3, 2, 4]
-    busLoad = 5
-    capacitatedMinDistance(graph, 0, busLoad, capacities)
+    busLoad = 10
+
+    directDistances = []
+    with open('directDistances.txt', 'r') as file:
+        for line in file:
+            line = line[1:-2].split(",")
+            line = [int(i.strip()) for i in line]
+            directDistances = line
+
+    capacitatedMinDistance(graph, 0, busLoad, capacities, directDistances)
