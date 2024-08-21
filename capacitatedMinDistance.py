@@ -48,6 +48,16 @@ def calculate_regret(busRoutes, direct, path_distances, graph, capacities):
     print(sum(regret), " = total regret of the system")
 
 
+def calculate_total_distance(busRoutes, graph):
+    total_distance = 0
+    for bus in busRoutes:
+        prev = bus[0]
+        for stop in bus[1:]:
+            total_distance += graph[prev][stop]
+            prev = stop
+
+    print(total_distance, " = total distance travelled by all buses in this model")
+
 # the model to calculate which buses take which routes in a minimal distance model
 def capacitatedMinDistance(graph, source, busLoad, capacities, directDistances):
     # set up
@@ -97,6 +107,7 @@ def capacitatedMinDistance(graph, source, busLoad, capacities, directDistances):
     print()
    
     calculate_regret(busRoutes, directDistances, pathDistances, graph, capacities)
+    calculate_total_distance(busRoutes, graph)
     
 
 
@@ -126,7 +137,6 @@ if __name__ == "__main__":
           
             line = [int(i.strip()) for i in line]
             capacities = line
-    print(capacities)
     directDistances = []
     with open('directDistances.txt', 'r') as file:
         for line in file:

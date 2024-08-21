@@ -115,6 +115,7 @@ def zeroRegret(graph, busLoad, capacities):
     passengers = [busLoad - loads[i] for i in range(len(loads)) if busLoad - loads[i] != 0]
     print(passengers, " = number of students travelling on each bus")
     print(busDistances, " = the distance that each bus travels on its route")
+    print(sum(busDistances), " = the total distance travelled by all buses in this model")
 
     return distances
                     
