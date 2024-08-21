@@ -16,7 +16,7 @@ def zeroRegret(graph, busLoad, capacities):
         distances.append(graph[0][v])
         loads[v-1] -= capacities[v]
         endpoints.append(v)
-   
+    
     # find min edge distance, see if there's a relaxation with any edge with this weight that works with loads
     exclusions = [0]
     exit = False
@@ -49,9 +49,10 @@ def zeroRegret(graph, busLoad, capacities):
                         index0 = i
                     if location[1] in paths[i]:
                         index1 = i
+                
                 altto1 = busDistances[index0] + graph[location[0]][location[1]]
                 altto0 = busDistances[index1] + graph[location[0]][location[1]]
-
+                
                 # see if it relaxes the distance for one of the two routes
                 if altto0 <= busDistances[index0]:
                     # see if it satisfies the capacity constraints
@@ -70,7 +71,8 @@ def zeroRegret(graph, busLoad, capacities):
                         busDistances[index1] = altto0
                         busDistances[index0] -= graph[location[0]][location[1]]
 
-                        distances[index0] -= graph[location[0]][location[1]]
+                        distances[location[0]-1] = altto0
+                        #distances[index1] += graph[location[0]][location[1]]
                         
                         # delete bus if necessary and same indices if relevant
                         if paths[index0] == [0]:
@@ -97,8 +99,8 @@ def zeroRegret(graph, busLoad, capacities):
                         # update busDistances
                         busDistances[index0] = altto1
                         busDistances[index1] -= graph[location[0]][location[1]]
-
-                        distances[index1] -= graph[location[0]][location[1]]
+                        distances[location[1]-1] = altto1
+                        #distances[index0] += graph[location[0]][location[1]]
                         
                         # delete bus if necessary and same indices if relevant
                         if paths[index1] == [0]:
@@ -124,24 +126,24 @@ def zeroRegret(graph, busLoad, capacities):
 
     
 if __name__ == "__main__":
-    # graph = [[0, 2, 3, 2, 3, 5, 6], 
-    #          [2, 0, 1, 4, 4, 5, 7],
-    #          [3, 1, 0, 3, 4, 5, 9],
-    #          [2, 4, 3, 0, 2, 4, 15],
-    #          [3, 4, 4, 2, 0, 1, 9],
-    #          [5, 5, 5, 4, 1, 0, 10],
-    #          [6, 7, 9, 15, 9, 10, 0]]
-    graph = []
-    with open('randomMatrix.txt', 'r') as file:
-        for line in file:
-            line = line[1:-2].split(",")
-            line = [int(i.strip()) for i in line]
-            graph.append(line)
+    graph = [[0, 2, 3, 2, 3, 5, 6], 
+             [2, 0, 1, 4, 4, 5, 7],
+             [3, 1, 0, 3, 4, 5, 9],
+             [2, 4, 3, 0, 2, 4, 15],
+             [3, 4, 4, 2, 0, 1, 9],
+             [5, 5, 5, 4, 1, 0, 10],
+             [6, 7, 9, 15, 9, 10, 0]]
+    # graph = []
+    # with open('randomMatrix.txt', 'r') as file:
+    #     for line in file:
+    #         line = line[1:-2].split(",")
+    #         line = [int(i.strip()) for i in line]
+    #         graph.append(line)
 
     
     capacities = [0, 5, 1, 3, 3, 2, 4]
     #capacities = [0, 1, 1, 1, 1, 1, 1]
-    busLoad = 5
+    busLoad = 10
     directDistances = zeroRegret(graph, busLoad, capacities)
 
     with open('directDistances.txt', 'w') as file:

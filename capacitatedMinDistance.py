@@ -101,26 +101,28 @@ def capacitatedMinDistance(graph, source, busLoad, capacities, directDistances):
 
 
 if __name__ == "__main__":
-    # graph = [[0, 2, 3, 2, 3, 5, 6], 
-    #          [2, 0, 1, 4, 4, 5, 7],
-    #          [3, 1, 0, 3, 4, 5, 9],
-    #          [2, 4, 3, 0, 2, 4, 15],
-    #          [3, 4, 4, 2, 0, 1, 9],
-    #          [5, 5, 5, 4, 1, 0, 10],
-    #          [6, 7, 9, 15, 9, 10, 0]]
-    graph = []
-    with open('randomMatrix.txt', 'r') as file:
-        for line in file:
-            line = line[1:-2].split(",")
-            line = [int(i.strip()) for i in line]
-            graph.append(line)
+    graph = [[0, 2, 3, 2, 3, 5, 6], 
+             [2, 0, 1, 4, 4, 5, 7],
+             [3, 1, 0, 3, 4, 5, 9],
+             [2, 4, 3, 0, 2, 4, 15],
+             [3, 4, 4, 2, 0, 1, 9],
+             [5, 5, 5, 4, 1, 0, 10],
+             [6, 7, 9, 15, 9, 10, 0]]
+    # graph = []
+    # with open('randomMatrix.txt', 'r') as file:
+    #     for line in file:
+    #         line = line[1:-2].split(",")
+    #         line = [int(i.strip()) for i in line]
+    #         graph.append(line)
     capacities = [0,5, 1, 3, 3, 2, 4]
-    busLoad = 10
+    busLoad = 5
 
     directDistances = []
     with open('directDistances.txt', 'r') as file:
         for line in file:
             line = line[1:-2].split(",")
+            
+            line = line[:-1]
             line = [int(i.strip()) for i in line]
             directDistances = line
 
