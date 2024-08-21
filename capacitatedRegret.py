@@ -145,6 +145,9 @@ if __name__ == "__main__":
     #capacities = [0, 1, 1, 1, 1, 1, 1]
     busLoad = 10
     directDistances = zeroRegret(graph, busLoad, capacities)
-
+    with open('busLoad.txt', 'w') as file:
+        file.write(str(busLoad))
+    with open('capacities.txt', 'w') as file:
+        file.write(str(capacities))
     with open('directDistances.txt', 'w') as file:
         file.write(str(directDistances))

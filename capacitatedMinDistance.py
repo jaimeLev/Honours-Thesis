@@ -114,9 +114,19 @@ if __name__ == "__main__":
     #         line = line[1:-2].split(",")
     #         line = [int(i.strip()) for i in line]
     #         graph.append(line)
-    capacities = [0,5, 1, 3, 3, 2, 4]
-    busLoad = 5
-
+    #capacities = [0,5, 1, 3, 3, 2, 4]
+    busLoad = None
+    with open('busLoad.txt', 'r') as file:
+        for line in file:
+            busLoad = int(line)
+    capacities = []
+    with open('capacities.txt', 'r') as file:
+        for line in file:
+            line = line[1:-1].split(",")
+          
+            line = [int(i.strip()) for i in line]
+            capacities = line
+    print(capacities)
     directDistances = []
     with open('directDistances.txt', 'r') as file:
         for line in file:
