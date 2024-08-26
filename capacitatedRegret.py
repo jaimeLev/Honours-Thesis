@@ -1,3 +1,14 @@
+def mapPaths(paths):
+    mapped = []
+    mapDict = {0: 'School', 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I', 10: 'J'}
+    for path in paths:
+        newPath = []
+        for node in path:
+            newPath.append(mapDict[node])
+        mapped.append(newPath)
+    return mapped
+
+
 # may be able to terminate earlier, potentially if one iteration doesn't change can stop
 # find min path from 0 to all other nodes. Only take a path is the bus can offload that amount of people
 # start with all buses taking direct routes
@@ -111,7 +122,7 @@ def zeroRegret(graph, busLoad, capacities):
                         endpoints.remove(location[0])
     print(capacities, " = how many students at each bus stop")
     print(distances, " = distances found from source to every node")
-    print(paths, " = bus routes")
+    print(mapPaths(paths), " = bus routes")
     passengers = [busLoad - loads[i] for i in range(len(loads)) if busLoad - loads[i] != 0]
     print(passengers, " = number of students travelling on each bus")
     print(busDistances, " = the distance that each bus travels on its route")
@@ -127,28 +138,33 @@ def zeroRegret(graph, busLoad, capacities):
 
     
 if __name__ == "__main__":
-    graph = [[0, 2, 3, 2, 3, 5, 6], 
-             [2, 0, 1, 4, 4, 5, 7],
-             [3, 1, 0, 3, 4, 5, 9],
-             [2, 4, 3, 0, 2, 4, 15],
-             [3, 4, 4, 2, 0, 1, 9],
-             [5, 5, 5, 4, 1, 0, 10],
-             [6, 7, 9, 15, 9, 10, 0]]
-    # graph = []
-    # with open('randomMatrix.txt', 'r') as file:
-    #     for line in file:
-    #         line = line[1:-2].split(",")
-    #         line = [int(i.strip()) for i in line]
-    #         graph.append(line)
+    # graph = [[0, 2, 3, 2, 3, 5, 6], 
+    #          [2, 0, 1, 4, 4, 7, 7],
+    #          [3, 1, 0, 3, 4, 5, 9],
+    #          [2, 4, 3, 0, 2, 4, 15],
+    #          [3, 4, 4, 2, 0, 1, 9],
+    #          [5, 7, 5, 4, 1, 0, 10],
+    #          [6, 7, 9, 15, 9, 10, 0]]
+    graph = []
+    with open('randomMatrix.txt', 'r') as file:
+        for line in file:
+            line = line[1:-2].split(",")
+            line = [int(i.strip()) for i in line]
+            graph.append(line)
+    capacities = []
+    with open('capacities.txt', 'r') as file:
+        for line in file:
+            line = line[1:-1].split(",")
+            line = [int(i.strip()) for i in line]
+            capacities = line
 
     
-    capacities = [0, 5, 1, 3, 3, 2, 4]
+    #capacities = [0, 5, 6, 3, 3, 2, 4]
     #capacities = [0, 1, 1, 1, 1, 1, 1]
     busLoad = 10
     directDistances = zeroRegret(graph, busLoad, capacities)
     with open('busLoad.txt', 'w') as file:
         file.write(str(busLoad))
-    with open('capacities.txt', 'w') as file:
-        file.write(str(capacities))
+    
     with open('directDistances.txt', 'w') as file:
         file.write(str(directDistances))

@@ -1,3 +1,13 @@
+def mapPaths(paths):
+    mapped = []
+    mapDict = {0: 'School', 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I', 10: 'J'}
+    for path in paths:
+        newPath = []
+        for node in path:
+            newPath.append(mapDict[node])
+        mapped.append(newPath)
+    return mapped
+
 # multiply the regret at each bus stop by the capacity of that bus stop to get the total regret in the system
 
 # function finds the distances from the source to each node in the network
@@ -101,7 +111,7 @@ def capacitatedMinDistance(graph, source, busLoad, capacities, directDistances):
     
     print(capacities, " = number of students being dropped off at each bus stop")
     print(directDistances, " = direct distances from source to each node")
-    print(busRoutes, " = bus routes")
+    print(mapPaths(busRoutes), " = bus routes")
     passengers = [busLoad - loads[i] for i in range(n) if busLoad - loads[i] != 0]
     print(passengers, " = number of students travelling on each bus")
     print()
@@ -112,19 +122,19 @@ def capacitatedMinDistance(graph, source, busLoad, capacities, directDistances):
 
 
 if __name__ == "__main__":
-    graph = [[0, 2, 3, 2, 3, 5, 6], 
-             [2, 0, 1, 4, 4, 5, 7],
-             [3, 1, 0, 3, 4, 5, 9],
-             [2, 4, 3, 0, 2, 4, 15],
-             [3, 4, 4, 2, 0, 1, 9],
-             [5, 5, 5, 4, 1, 0, 10],
-             [6, 7, 9, 15, 9, 10, 0]]
-    # graph = []
-    # with open('randomMatrix.txt', 'r') as file:
-    #     for line in file:
-    #         line = line[1:-2].split(",")
-    #         line = [int(i.strip()) for i in line]
-    #         graph.append(line)
+    # graph = [[0, 2, 3, 2, 3, 5, 6], 
+    #          [2, 0, 1, 4, 4, 7, 7],
+    #          [3, 1, 0, 3, 4, 5, 9],
+    #          [2, 4, 3, 0, 2, 4, 15],
+    #          [3, 4, 4, 2, 0, 1, 9],
+    #          [5, 7, 5, 4, 1, 0, 10],
+    #          [6, 7, 9, 15, 9, 10, 0]]
+    graph = []
+    with open('randomMatrix.txt', 'r') as file:
+        for line in file:
+            line = line[1:-2].split(",")
+            line = [int(i.strip()) for i in line]
+            graph.append(line)
     #capacities = [0,5, 1, 3, 3, 2, 4]
     busLoad = None
     with open('busLoad.txt', 'r') as file:
@@ -140,9 +150,7 @@ if __name__ == "__main__":
     directDistances = []
     with open('directDistances.txt', 'r') as file:
         for line in file:
-            line = line[1:-2].split(",")
-            
-            line = line[:-1]
+            line = line[1:-1].split(",")
             line = [int(i.strip()) for i in line]
             directDistances = line
 
