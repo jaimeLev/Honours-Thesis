@@ -1,4 +1,5 @@
 import random
+import sys
 
 # This function randomises the number of students at each bus stop
 # ie. the bus stop capacities c_i for i = {1,...,n} where n = # bus stops
@@ -6,9 +7,16 @@ import random
 # To generate the desires bus stop capacities, change line 11 to say <n>stopCapacities.txt
 # and update lines 13, 14, 15 and 17 by the instructions on the line
 
+if len(sys.argv) != 2:
+    print("Please input number of bus stops as a parameter 8, 16, 32, 64 or 128.")
+    print(len(sys.argv))
+    exit
+n = int(sys.argv[1])
+
+
 smallest = float('inf')
 largest = 0
-with open("capacities/128stopCapacities.txt", "w") as f:
+with open(f"capacities/{n}stopCapacities.txt", "w") as f:
     for j in range(100):
         arr = [1]*128 # vary for number of bus stops n = 8, 16, 32, 64, 128
         for i in range(72): # vary this from 200 - n
