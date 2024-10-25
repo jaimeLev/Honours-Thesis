@@ -4,24 +4,23 @@ import sys
 # Determines the regret at each bus stop. Multiplies it by the bus stop capacity at the respective stop, and sums that to get the total system regret.
 # Calculates regret at each stop by comparing the direct distances calculated in zeroRegretWithCapacities with the Minimum Distance Model here
 # Can uncomment the print statements if running a model from the command line to see the stats
-def calculate_regret(busRoutes, direct, pathSums, graph, capacities):
+def calculate_regret(busRoutes, direct, distances, graph, capacities):
     for bus in busRoutes:
-        stop = 2 # busRoute[0] = 0 and busRoute[1] is the first so the pathSums[busRoute[1]] is the path_distance so far, so only need to add the rest on top of that
+        stop = 2 # busRoute[0] = 0 and busRoute[1] is the first so the distances[busRoute[1]] is the path_distance so far, so only need to add the rest on top of that
         while stop < len(bus):
-            pathSums[bus[stop]] += pathSums[bus[stop-1]]
+            distances[bus[stop]] += distances[bus[stop-1]]
             stop += 1
-    regretAtBusStops = [pathSums[i+1] - direct[i] for i in range(len(direct))] # regret for each individual bus stop
+    regretAtBusStops = [distances[i+1] - direct[i] for i in range(len(direct))] # regret for each individual bus stop
     regret = [regretAtBusStops[i]*capacities[i+1] for i in range(len(regretAtBusStops))]
 
     # Uncomment these print statements to see more
-    #print(pathSums[1:], " = path from source to each node i")
+    #print(distances[1:], " = path from source to each node i")
     #print(regretAtBusStops, " = regret experienced at each bus stop on the choice of routes in minimal distance model")
     #print(capacities[1:], " = capacities") # capacity of school is 0 since not transporting there
     #print(regret, " = regret at each bus stop multiplied by the number of students at each stop")
     #print(sum(regret), " = total regret of the system")
     # numStopsRegret = sum(x != 0 for x in regretAtBusStops)
     # print(f"The number of stops that experience regret is {numStopsRegret}")
-
     return sum(regret)
 
 
@@ -39,16 +38,16 @@ def calculate_total_distance(busRoutes, graph):
 
 # This function finds which bus routes to take in when prioritising cost minimisation
 # This is the Minimum Distance Model (MDM)
-def greedyMinDistanceWithCapacities(graph, busLoad, capacities, directDistances):
+def greedyMinDistance(graph, busLoad, capacities, directDistances):
     # set up
     source = 0
     n = len(graph) # number of bus stops
     G = [i for i in range(1, n)] # list of unvisited nodes, initially will be all nodes except the source
     current = [source]*n # keeps track of where the buses are -> the endpoints of the routes, initially all at the school
     busRoutes = [[source] for i in range(n)]
-    busDistances = [0]*n
+    pathSums = [0]*n # the total distance in each bus route
     loads = [busLoad]*n # before routing anywhere, all buses can take on busLoad number of students
-    pathSums = [0]*n
+    distances = [0]*n # keeps track of distances from the source to each node
 
     while len(G) > 0: # while there are still unvisited nodes
         min_dist = float('inf')
@@ -68,13 +67,13 @@ def greedyMinDistanceWithCapacities(graph, busLoad, capacities, directDistances)
         loads[busNumber] -= capacities[minV] # update how many people the bus can still transport after visiting this node
         current[busNumber] = minV
         busRoutes[busNumber].append(minV)
-        busDistances[busNumber] += min_dist
-        pathSums[minV] += min_dist
+        pathSums[busNumber] += min_dist
+        distances[minV] += min_dist
         G.remove(minV)
         
     # remove any redundant bus routes    
     busRoutes = [x for x in busRoutes if x != [0]]
-    busDistances = [x for x in busDistances if x != 0]
+    pathSums = [x for x in pathSums if x != 0]
     
     # If running capacitatedMinDistance.py from command line, can uncomment these print statements to see individual model stats
     # print(capacities, " = number of students being dropped off at each bus stop")
@@ -82,10 +81,9 @@ def greedyMinDistanceWithCapacities(graph, busLoad, capacities, directDistances)
     # print(busRoutes, " = bus routes")
     # passengers = [busLoad - loads[i] for i in range(n) if busLoad - loads[i] != 0]
     # print(passengers, " = number of students travelling on each bus")
-    # print(busDistances, " = distance each bus travels on its route")
+    # print(pathSums, " = distance each bus travels on its route")
     # print()
-   
-    totalRegret = calculate_regret(busRoutes, directDistances, pathSums, graph, capacities)
+    totalRegret = calculate_regret(busRoutes, directDistances, distances, graph, capacities)
     totalDistance = calculate_total_distance(busRoutes, graph)
     
     return len(busRoutes), totalRegret, totalDistance
@@ -109,7 +107,7 @@ if __name__ == "__main__":
             for line in file:
                 line = line[1:-1].split(",")
                 line = [int(i.strip()) for i in line]
-                capacities = [0,*line]
+                capacities = line
         with open('directDistances.txt', 'r') as file:
             for line in file:
                 line = line[1:-1].split(",")
@@ -127,4 +125,4 @@ if __name__ == "__main__":
             line = [int(i.strip()) for i in line]
             graph.append(line)
 
-    greedyMinDistanceWithCapacities(graph, busLoad, capacities, directDistances)
+    greedyMinDistance(graph, busLoad, capacities, directDistances)
