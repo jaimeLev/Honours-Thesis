@@ -30,7 +30,7 @@ if __name__ == "__main__":
     busLoad = 64 # FIXED for this investigation
     numStudents = 200 # FIXED for this investigation
 
-    with open(f"results/n{n}byl{l}for{numStudents}StudentstransportingMax{busLoad}.csv", 'w') as fout:
+    with open(f"results/{n}stopsForSize{l}.csv", 'w') as fout:
         line = ["location index", "capacity index", "total regret", "extra distance", "extra buses"]
         o=csv.writer(fout)
         o.writerow(line)
